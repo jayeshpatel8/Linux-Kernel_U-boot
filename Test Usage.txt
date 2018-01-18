@@ -1,0 +1,52 @@
+# Comppile kernel module 
+# go to the directory and run make
+# run Makefile to generate key val store kernel module = keyvs
+make
+
+#insert the module
+sudo insmod keyvs.ko
+
+#create the dev file with major=61 for example and give read-write permission
+sudo mknod /dev/keyvs c 61 0
+sudo chmod 666 /dev/keyvs
+
+#Max 256 key insertion is supported afterward insertion will fail
+
+# run ./test_s script to compile test application
+./test_s
+
+#usage of test application 
+#usage: Inserting/Replacing a Key&value of size int64_t: ./test INS <key> <value>  : ./test INS 1334 4356 
+#usage: Searching a insearted Key: ./test GET <key> :./test  GET 1334 
+#usage: Deleting a Key ./test DEL <key>: ./test DEL 1334
+#upon success of operation will get key value on which operation got successful : like Inserted: key:12388 val:70898 
+#upon error case it will print err_code : Key Not Found err_code:-1
+
+#Searching for a key when keyValStore is empty
+jp@:~/code$./test GET -1
+searchKey: key=-1 
+Key Not Found err_code:-1
+
+
+jp@:~/code$./test INS 12388 70898
+insertKey: key=12388, val=70898 
+Inserted: key:12388 val:70898 
+
+jp@:~/code$./test GET 12388 
+searchKey: key=12388 
+Key Found: key:12388 val:70898 
+
+jp@:~/code$./test DEL 12388 
+deleteKey: key=12388 
+Deleted: key:12388 
+
+jp@:~/code$./test INS abc adfd
+insertKey: key=5451, val=54792 
+Inserted: key:5451 val:54792 
+
+jp@:~/code$./test GET abc
+searchKey: key=5451 
+Key Found: key:5451 val:54792 
+
+#remove the module
+sudo rmmod keyvs.ko
