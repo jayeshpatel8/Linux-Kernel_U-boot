@@ -1,3 +1,8 @@
+Linux Kernel Module : RAM-based key-value store (associative array) in the kernelspace:-
+ï‚· The key-value store will be accessible from the userspace.
+ï‚· No  in-kernel API to the key-value store.
+ï‚· API between the kernelspace and userspace is easy to use from the shell scripts.
+
 KeyValStore module supports inserting,search and deletion operation.
 Implemented using read and write operation of dev file.
 Read() Call is used for searching a inserted key and it's a lock free while Write() operation call is used for Insertion and Deletion of Key 
@@ -6,7 +11,7 @@ and its interruptible blocking call.
 Key & Value can be of max 8 bytes long integer.
 
 
-§Insertion:
+Â§Insertion:
 write(fd,"SET<8 bytes of key><8 bytes of val>",19)
 
 Insertion Return value
@@ -27,10 +32,10 @@ Max recursion is euql to log(max key supported). For 256 ,it will be 8.
 Insertion caller May get suspended(interruptible) :if there is ongoing Insertion/Deletion. It will remain suspended till either Lock becomes free or
 SIGNAL has been sent.
 
-On each new key insertion it will look to allocated memorz from ínternal freeNodePool (which holds the free node memory upon successfull key deletion)
+On each new key insertion it will look to allocated memorz from Ã­nternal freeNodePool (which holds the free node memory upon successfull key deletion)
 and  if freeNodePool is empty then it will allocate using kmalloc().
 
-§Deletion:
+Â§Deletion:
 write(fd,"DEL<8 bytes of key>",11)
 returns 11 if successful else error code
 
@@ -45,7 +50,7 @@ Upon successful Deletion if key is exist then it memory will not be free using k
 meaning once key is inserted its memory will remain allocated but upon successful its link will be moved removed from key-value tree.
 Complete Memory free will only happen upon module remove from kernel.
 
-§Searching:
+Â§Searching:
 read(fd,"<8 bytes of key>",8)
 returns 8 if successful else error code
 
@@ -57,7 +62,7 @@ Searching Return value
            while searching was on going. User may retry.
 - 0 if key is longer than 8 byte.  
 
-§Improvment:
+Â§Improvment:
 Provide the command line option for max supported keys in key-value store data base adding kernel module command line parameter
 Return different err_code for key doesnt exist and key deleted for key delete operation by adding one more function argument to deleteKey API
 Add support of more data type and large width/variable length data types using hash mapping function.
